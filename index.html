@@ -145,6 +145,35 @@
             border-bottom: 2px solid rgba(0, 0, 0, 0.05);
         }
 
+        .refresh-btn {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s, transform 0.2s;
+            color: #6f8a9b;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(0, 161, 214, 0.1);
+            color: #00a1d6;
+            transform: rotate(30deg);
+        }
+
+        .refresh-btn.spinning {
+            animation: spin 0.8s linear infinite;
+            pointer-events: none;
+            color: #00a1d6;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .platform-icon {
             font-size: 2rem;
         }
@@ -284,6 +313,29 @@
             padding-top: 1.5rem;
         }
 
+        .loading-more {
+            text-align: center;
+            padding: 1rem;
+            color: #8ba0ae;
+            font-size: 0.8rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #1e6f5c;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 1000px) {
             body { padding: 1rem; }
             .platform-col { min-width: 280px; }
@@ -321,9 +373,14 @@
 
 <script>
     // ============================================================
-    // 📌 主题数据库（每个主题包含小红书/B站/抖音各5条真实高赞链接）
+    // 📌 后端API地址（部署后替换为公网地址）
     // ============================================================
-    
+    // const API_BASE = 'http://localhost:3001';  // 本地开发用
+    const API_BASE = 'https://oral-english-backend.vercel.app';  // 生产环境
+
+    // ============================================================
+    // 📌 静态主题数据库（小红书/抖音，B站已改为实时爬取）
+    // ============================================================
     const topicDatabase = {
         "英语口语": {
             xiaohongshu: [
@@ -332,13 +389,6 @@
                 { title: "美式发音秘诀｜舌头位置图", desc: "r/l/th 发音对比，一分钟纠正中式口音", likes: 36900, collects: 20500, author: "爱讲英语的罗拉", url: "https://www.xiaohongshu.com/explore/649c1a5e000000001d02c7d" },
                 { title: "每天五分钟｜英音养成计划", desc: "BBC播音员素材跟读，语调丝滑", likes: 28400, collects: 17600, author: "英伦柚子姐", url: "https://www.xiaohongshu.com/explore/642e9b4c000000001f019b2" },
                 { title: "听力口语双杀｜播客推荐", desc: "最适合模仿的5个英文播客，磨耳朵神器", likes: 22300, collects: 15800, author: "Lynn学英语", url: "https://www.xiaohongshu.com/explore/647a3f2e000000001902f5c" }
-            ],
-            bilibili: [
-                { title: "【100集全】油管播放量破亿！日常英语口语必备练习素材", desc: "刷一遍口语听力直接无敌，持续更新中", likes: 98700, collects: 67200, author: "YouTube英语听说", url: "https://www.bilibili.com/video/BV1jm421371m" },
-                { title: "让英语口语进步最快的学习顺序（没有之一）", desc: "一个人练口语，用这个方法，犹如开挂！", likes: 75400, collects: 42100, author: "英语兔", url: "https://www.bilibili.com/video/BV1PSkBBQEgT" },
-                { title: "学英文最有效的方法？跟读就对了！美国人每天在说的300句", desc: "零基础到进阶，Shadowing影子跟读", likes: 68900, collects: 50300, author: "英语学习驿站", url: "https://www.bilibili.com/video/BV1oA411b7dR" },
-                { title: "英音模仿练习唐顿庄园", desc: "唐顿庄园英音跟读，贵族腔调拿捏", likes: 45200, collects: 29800, author: "Sylvia爱英音", url: "https://www.bilibili.com/video/BV1yqKxzyEzk" },
-                { title: "相见恨晚的英语思维训练法，口语渣渣1个月内练出口语（有效）", desc: "思维导图法+填充词策略，即兴表达技巧", likes: 33600, collects: 21800, author: "英语学习方法论", url: "https://www.bilibili.com/video/BV1nR4y1K7JW" }
             ],
             douyin: [
                 { title: "一招让口语变高级｜虚拟语气", desc: "老外听了都惊讶的表达，30秒学会", likes: 128400, collects: 89400, author: "大白口语", url: "https://www.douyin.com/video/7314875921643842842" },
@@ -356,13 +406,6 @@
                 { title: "瘦腿干货｜女团腿养成", desc: "每天8个动作，两周见效", likes: 67200, collects: 48900, author: "腿腿修炼手册", url: "https://www.xiaohongshu.com/explore/647c3e5a000000001902d6c" },
                 { title: "碳水循环｜懒人减肥法", desc: "不用运动也能瘦，亲测5斤", likes: 54800, collects: 39700, author: "营养师小陈", url: "https://www.xiaohongshu.com/explore/646a2f7c000000001d02b3e" }
             ],
-            bilibili: [
-                { title: "20分钟HIIT全身燃脂运动｜全程站立、无工具", desc: "不扰民，30分钟暴汗，入门级可跟练", likes: 9805000, collects: 148000, author: "周六野Zoey", url: "https://www.bilibili.com/video/BV1ea411c7MK" },
-                { title: "帕梅拉 - 10分钟HIIT万岁 欢乐训练｜有氧轻松快乐燃脂", desc: "新手友好版，高效减脂，10分钟消耗80kcal", likes: 5405800, collects: 34000, author: "帕梅拉PamelaReif", url: "https://www.bilibili.com/video/BV1a94y1R7pF" },
-                { title: "帕梅拉 - 10分钟 帕比狂欢舞｜甜辣燃脂巨掉秤", desc: "情绪多巴胺，0基础简单暴汗，芭比主题", likes: 5449000, collects: 47400, author: "帕梅拉PamelaReif", url: "https://www.bilibili.com/video/BV1hc411w7rr" },
-                { title: "5分钟瘦手臂运动，无工具坐着完成超酸爽！", desc: "每天5分钟，甩掉拜拜肉，全网超火", likes: 1278300, collects: 35000, author: "周六野Zoey", url: "https://www.bilibili.com/video/BV1yW411N7uG" },
-                { title: "帕梅拉 - 10分钟HIIT燃脂！高强全身燃脂训练 无器械", desc: "经典HIIT，杀手燃脂，基础动作男生也适用", likes: 5407800, collects: 48000, author: "帕梅拉PamelaReif", url: "https://www.bilibili.com/video/BV1Np4y1i7rG" }
-            ],
             douyin: [
                 { title: "每天10分钟｜一周瘦3斤", desc: "跟练版，超简单", likes: 156700, collects: 112300, author: "健身教练小杨", url: "https://www.douyin.com/video/7321456789234567890" },
                 { title: "瘦背显年轻｜少女背养成", desc: "3个动作，改善圆肩驼背", likes: 112400, collects: 87600, author: "体态大师", url: "https://www.douyin.com/video/7318765432198765432" },
@@ -378,13 +421,6 @@
                 { title: "男生穿搭｜干净清爽公式", desc: "普通人变帅的3个核心", likes: 82300, collects: 62100, author: "男装搭配师", url: "https://www.xiaohongshu.com/explore/647d4e6c000000001e02d9f" },
                 { title: "通勤穿搭｜上班穿什么", desc: "气质又舒适，一周不重样", likes: 75600, collects: 57800, author: "职场穿搭日记", url: "https://www.xiaohongshu.com/explore/646b5f8e000000001c03e4a" },
                 { title: "平价穿搭｜百元以内", desc: "学生党福音，便宜又好看", likes: 68900, collects: 53400, author: "省钱穿搭bot", url: "https://www.xiaohongshu.com/explore/645a7c9d000000001f01d8b" }
-            ],
-            bilibili: [
-                { title: "请相信165小个子的穿搭技巧！10年血泪逆袭史！", desc: "小个子显高｜男生穿搭指南｜从头到脚显高技巧大合集", likes: 65400, collects: 49800, author: "穿搭UP主", url: "https://www.bilibili.com/video/BV1mW411N7iX" },
-                { title: "155cm小个子女生正确穿搭思路，穿对显高10cm！", desc: "改造前后对比，干货满满", likes: 53200, collects: 38700, author: "穿搭达人", url: "https://www.bilibili.com/video/BV1yW411N7iX" },
-                { title: "如何看上去显高10cm？男生实用显高穿搭技巧分享", desc: "告别黑白灰，穿出高级感，附8件夏季单品", likes: 48700, collects: 36200, author: "时尚博主", url: "https://www.bilibili.com/video/BV1DY411h7xP" },
-                { title: "150cm｜小个子的显高夏日穿搭分享", desc: "扬长避短，穿出沙漏型，平价好物", likes: 42300, collects: 31500, author: "小个子穿搭", url: "https://www.bilibili.com/video/BV1Sr4y1n7pN" },
-                { title: "155梨形小个子衣服避雷，这么穿显高显瘦还日常", desc: "黄黑皮救星，颜色这样选", likes: 36800, collects: 27400, author: "梨形穿搭", url: "https://www.bilibili.com/video/BV1G44y1k7qR" }
             ],
             douyin: [
                 { title: "一衣多穿｜1件衣服搭出5种风格", desc: "省钱又时髦", likes: 143200, collects: 109800, author: "穿搭美学", url: "https://www.douyin.com/video/7322345678912345678" },
@@ -402,13 +438,6 @@
                 { title: "口红试色｜黄皮显白", desc: "12支热门色号，无滤镜", likes: 76500, collects: 54300, author: "口红控莉莉", url: "https://www.xiaohongshu.com/explore/647c7f6b000000001c02e1b" },
                 { title: "早八妆｜5分钟搞定", desc: "通勤快速化妆，省时又好看", likes: 65400, collects: 48700, author: "打工人化妆", url: "https://www.xiaohongshu.com/explore/646b8e7c000000001f03d2c" }
             ],
-            bilibili: [
-                { title: "易碎凄楚妆｜扁平肉圆脸跟程十安学！", desc: "修容+发型，脸小一圈，新手必学", likes: 76500, collects: 59800, author: "程十安", url: "https://www.bilibili.com/video/BV1r44y1g7SG" },
-                { title: "小猪姐姐！！美人面系列3连换妆", desc: "简单3步，告别脏眼妆，手残党友好", likes: 65400, collects: 48700, author: "小猪姐姐zzreal", url: "https://www.bilibili.com/video/BV1J64y1z7uF" },
-                { title: "圆脸跟着程十安一起学下巴修容", desc: "遮瑕不假面，养肤粉底，没动刀也有下巴", likes: 54300, collects: 42100, author: "程十安", url: "https://www.bilibili.com/video/BV18q4y1Z7sV" },
-                { title: "小猪姐姐！！幸福感妆容变身漂亮小姐姐", desc: "一套刷子搞定全脸，化妆刷使用教程", likes: 48700, collects: 36500, author: "小猪姐姐zzreal", url: "https://www.bilibili.com/video/BV1pW411b7iJ" },
-                { title: "普女跟这程十安改善面部凹陷｜提亮大法我悟了", desc: "不同脸型修容公式，骨相遮瑕", likes: 43200, collects: 32800, author: "程十安", url: "https://www.bilibili.com/video/BV1JZ4y197ed" }
-            ],
             douyin: [
                 { title: "无效化妆vs有效化妆", desc: "改掉这几点，颜值翻倍", likes: 187600, collects: 143200, author: "化妆师小K", url: "https://www.douyin.com/video/7323456789123456789" },
                 { title: "肿眼泡双眼皮贴教程", desc: "隐形不掉，一秒放大", likes: 154300, collects: 118700, author: "眼妆王炸", url: "https://www.douyin.com/video/7322109876543210987" },
@@ -424,13 +453,6 @@
                 { title: "AI工具推荐｜效率翻倍", desc: "10款神器，告别加班", likes: 68700, collects: 52300, author: "效率工具控", url: "https://www.xiaohongshu.com/explore/648d8f7b000000001f04f1b" },
                 { title: "Stable Diffusion本地部署", desc: "免费AI绘画，电脑就能跑", likes: 59800, collects: 45600, author: "AI炼丹师", url: "https://www.xiaohongshu.com/explore/647c9f6c000000001d03e2c" },
                 { title: "提示词工程｜让AI说人话", desc: "万能公式，输出质量翻倍", likes: 50900, collects: 39800, author: "提示词魔法师", url: "https://www.xiaohongshu.com/explore/646baf7d000000001e04d3d" }
-            ],
-            bilibili: [
-                { title: "【李沐】动手学机器学习（29集全）CS 329P", desc: "斯坦福实用机器学习，从数据到模型调参全攻略", likes: 98700, collects: 76500, author: "跟李沐学AI", url: "https://www.bilibili.com/video/BV1xYM7zAEoe" },
-                { title: "2025版【李沐】实用机器学习", desc: "零基础转行入门AI学习路线图，附课件源码", likes: 85400, collects: 63200, author: "迪哥AI知识库", url: "https://www.bilibili.com/video/BV1wHbGzZEj6" },
-                { title: "【视频+教材】李沐经典之作《动手学习深度学习》", desc: "深度学习入门必看，全篇通俗易懂", likes: 74300, collects: 56700, author: "从零学AI_李沐", url: "https://www.bilibili.com/video/BV1uM8RzhEkw" },
-                { title: "Transformer论文逐段精读【论文精读】", desc: "175.2万播放，通俗易懂，小白也能懂大模型原理", likes: 63200, collects: 49800, author: "跟李沐学AI", url: "https://www.bilibili.com/video/BV1pu411o7BE" },
-                { title: "10行代码战胜90%数据科学家？", desc: "AutoGluon背后的技术，用AI接单实战", likes: 54300, collects: 42100, author: "跟李沐学AI", url: "https://www.bilibili.com/video/BV1nR4y1K7JW" }
             ],
             douyin: [
                 { title: "5个AI神器｜打工人必备", desc: "自动做PPT/写周报/翻译", likes: 198700, collects: 154300, author: "AI小课堂", url: "https://www.douyin.com/video/7324567891234567890" },
@@ -448,13 +470,6 @@
                 { title: "谈薪资话术｜多拿30%", desc: "话术模板，不卑不亢", likes: 68700, collects: 49800, author: "薪资谈判官", url: "https://www.xiaohongshu.com/explore/647caf7d000000001d04f3d" },
                 { title: "空窗期怎么说", desc: "HR反感的回答vs高情商回答", likes: 59800, collects: 43200, author: "求职加油站", url: "https://www.xiaohongshu.com/explore/646bbf8e000000001e05e4e" }
             ],
-            bilibili: [
-                { title: "【面试社恐必看】自我介绍看这一篇就够了！", desc: "校招/社招通用，3秒抓住面试官", likes: 132300, collects: 1268, author: "姜Dora在此", url: "https://www.bilibili.com/video/BV1nR4y1K7JW" },
-                { title: "30年HR经历的大高管的全部面试技巧！", desc: "一个视频讲透面试官底层逻辑", likes: 76500, collects: 54300, author: "哀绿妈妈洪朝阳", url: "https://www.bilibili.com/video/BV1VT4y1w7dW" },
-                { title: "8个没人告诉你的面试真相", desc: "迅速提升面试通过率，薪资谈判技巧", likes: 65400, collects: 49800, author: "忆菁很无敌", url: "https://www.bilibili.com/video/BV1Tr4y1n7pX" },
-                { title: "【面试反杀】面试官：你有啥缺点？", desc: "甩出行动闭环，直接把HR整不会了", likes: 54300, collects: 42100, author: "eva姐聊职场", url: "https://www.bilibili.com/video/BV1H44y1k7rY" },
-                { title: "【实用干货】0经验入行/转行思路", desc: "没有一句废话版，面试项目经历满分讲法", likes: 43200, collects: 32600, author: "北大博哥求职私教", url: "https://www.bilibili.com/video/BV1C44y1k7qU" }
-            ],
             douyin: [
                 { title: "面试被问缺点｜满分回答", desc: "把缺点说成优点，HR都信了", likes: 187600, collects: 143200, author: "面试逆袭", url: "https://www.douyin.com/video/7325678901234567891" },
                 { title: "群面技巧｜无领导小组", desc: "timer/leader/reporter 角色攻略", likes: 165400, collects: 129800, author: "群面杀手", url: "https://www.douyin.com/video/7324321098765432109" },
@@ -465,9 +480,6 @@
         }
     };
 
-    // ============================================================
-    // 🎯 平台配置
-    // ============================================================
     const platformConfig = {
         xiaohongshu: { name: "小红书", icon: "📕", cssClass: "xhs", key: "xiaohongshu" },
         bilibili: { name: "B站", icon: "📺", cssClass: "bili", key: "bilibili" },
@@ -483,16 +495,12 @@
     }
 
     // ============================================================
-    // 🔗 根据平台+标题生成搜索链接（小红书/抖音无法获取真实链接时使用）
+    // 🔗 小红书/抖音搜索链接
     // ============================================================
     function buildSearchUrl(platform, title) {
         const keyword = encodeURIComponent(title.split('｜')[0].trim());
-        if (platform === 'xiaohongshu') {
-            return `https://www.xiaohongshu.com/search_result?keyword=${keyword}`;
-        }
-        if (platform === 'douyin') {
-            return `https://www.douyin.com/search/${keyword}`;
-        }
+        if (platform === 'xiaohongshu') return `https://www.xiaohongshu.com/search_result?keyword=${keyword}`;
+        if (platform === 'douyin') return `https://www.douyin.com/search/${keyword}`;
         return '#';
     }
 
@@ -500,8 +508,7 @@
     // 🖼️ 生成卡片 HTML
     // ============================================================
     function createCardHTML(item, platform) {
-        // B站使用真实链接；小红书/抖音使用搜索链接（平台反爬限制无法获取具体笔记/视频链接）
-        const url = (platform === 'bilibili') ? item.url : buildSearchUrl(platform, item.title);
+        const url = item.url;
         const btnText = platform === 'bilibili' ? '🔗 查看原文 →' : '🔍 去搜索 →';
         return `
             <div class="resource-card">
@@ -520,12 +527,10 @@
         `;
     }
 
-
-
     // ============================================================
-    // 🏗️ 渲染平台列
+    // 🏗️ 渲染小红书/抖音静态列
     // ============================================================
-    function renderPlatformColumn(platform, items) {
+    function renderStaticColumn(platform, items) {
         const cfg = platformConfig[platform];
         if (!items || items.length === 0) {
             return `
@@ -551,21 +556,124 @@
     }
 
     // ============================================================
-    // 🎯 模糊搜索：根据输入匹配 topicDatabase 的 key
+    // 📺 B站实时渲染（窗口切换：每次5条，共50条）
+    // ============================================================
+    const BILI_PAGE_SIZE = 5;
+
+    let biliState = {
+        keyword: '',
+        offset: 0,
+        loading: false,
+        allVideos: [],
+    };
+
+    function getBiliWindowVideos() {
+        return biliState.allVideos.slice(biliState.offset, biliState.offset + BILI_PAGE_SIZE);
+    }
+
+    function renderBilibiliColumn() {
+        const cfg = platformConfig.bilibili;
+        const grid = document.getElementById("platformGrid");
+        let col = document.getElementById("bili-column");
+
+        if (!col) {
+            const html = `
+                <div class="platform-col ${cfg.cssClass}" id="bili-column">
+                    <div class="platform-header">
+                        <span class="platform-icon">${cfg.icon}</span>
+                        <span class="platform-name">${cfg.name}</span>
+                        <button class="refresh-btn" id="bili-refresh" title="换一批">🔄</button>
+                    </div>
+                    <div class="card-list" id="bili-list"></div>
+                    <div class="bili-pager" id="bili-pager"></div>
+                    <div class="loading-more" id="bili-loading" style="display:none">
+                        <span class="loading-spinner"></span>加载中...
+                    </div>
+                </div>
+            `;
+            if (grid.children.length >= 2) {
+                grid.insertAdjacentHTML('beforeend', html);
+            } else {
+                grid.insertAdjacentHTML('afterbegin', html);
+            }
+            col = document.getElementById("bili-column");
+            document.getElementById("bili-refresh").addEventListener('click', handleBiliRefresh);
+        }
+
+        const list = document.getElementById("bili-list");
+        const pager = document.getElementById("bili-pager");
+        const videos = getBiliWindowVideos();
+        const cardsHTML = videos.map(item => createCardHTML(item, 'bilibili')).join("");
+        list.innerHTML = cardsHTML || '<div class="no-result">暂无结果</div>';
+
+        if (biliState.allVideos.length > 0) {
+            const start = biliState.offset + 1;
+            const end = Math.min(biliState.offset + BILI_PAGE_SIZE, biliState.allVideos.length);
+            pager.innerHTML = `<span style="font-size:0.75rem;color:#6f8a9b;text-align:center;display:block;padding:8px 0;">第 ${start}-${end} 条 / 共 ${biliState.allVideos.length} 条（按点赞排序）</span>`;
+        } else {
+            pager.innerHTML = '';
+        }
+    }
+
+    async function fetchBilibiliVideos(keyword) {
+        const res = await fetch(`${API_BASE}/api/bilibili/search?keyword=${encodeURIComponent(keyword)}&_t=${Date.now()}`);
+        if (!res.ok) throw new Error('fetch failed');
+        return res.json();
+    }
+
+    function showBiliError(msg) {
+        const list = document.getElementById("bili-list");
+        if (list) {
+            list.innerHTML = `<div class="no-result" style="color:#e05a5a">⚠️ ${msg}</div>`;
+        }
+    }
+
+    async function loadBilibiliData() {
+        if (biliState.loading) return;
+        biliState.loading = true;
+        document.getElementById("bili-loading").style.display = "block";
+        const refreshBtn = document.getElementById("bili-refresh");
+        if (refreshBtn) refreshBtn.classList.add("spinning");
+
+        try {
+            console.log('[B站] 请求 keyword=', biliState.keyword);
+            const data = await fetchBilibiliVideos(biliState.keyword);
+            console.log('[B站] 返回', data.videos.length, '条');
+            biliState.allVideos = data.videos;
+            biliState.offset = 0;
+            renderBilibiliColumn();
+        } catch (e) {
+            console.error('[B站] 加载失败:', e);
+            showBiliError('加载失败，请检查后端服务是否运行 (' + e.message + ')');
+        } finally {
+            biliState.loading = false;
+            document.getElementById("bili-loading").style.display = "none";
+            if (refreshBtn) refreshBtn.classList.remove("spinning");
+        }
+    }
+
+    function handleBiliRefresh() {
+        if (biliState.loading) return;
+        const nextOffset = biliState.offset + BILI_PAGE_SIZE;
+        if (nextOffset >= biliState.allVideos.length) {
+            // 已看完，重新请求API
+            loadBilibiliData();
+        } else {
+            // 显示下一批
+            biliState.offset = nextOffset;
+            renderBilibiliColumn();
+        }
+    }
+
+    // ============================================================
+    // 🎯 模糊搜索
     // ============================================================
     function findMatchingTopic(query) {
         const q = query.trim().toLowerCase();
         if (!q) return null;
         const keys = Object.keys(topicDatabase);
-        // 精确匹配优先
-        for (const key of keys) {
-            if (key.toLowerCase() === q) return key;
-        }
-        // 包含匹配
-        for (const key of keys) {
-            if (key.toLowerCase().includes(q)) return key;
-        }
-        // 关键词交叉匹配
+        for (const key of keys) if (key.toLowerCase() === q) return key;
+        for (const key of keys) if (key.toLowerCase().includes(q)) return key;
         for (const key of keys) {
             if (q.includes("英语") && key.includes("英语")) return key;
             if (q.includes("口语") && key.includes("口语")) return key;
@@ -586,28 +694,40 @@
     }
 
     // ============================================================
-    // 📋 获取建议话题列表
-    // ============================================================
-    function getSuggestions() {
-        return Object.keys(topicDatabase);
-    }
-
-    // ============================================================
     // 🖥️ 整体渲染
     // ============================================================
-    function renderAll(topicKey) {
+    function renderAll(topicKey, rawQuery) {
         const grid = document.getElementById("platformGrid");
         const suggestionBox = document.getElementById("suggestionBox");
+        grid.innerHTML = "";
+        suggestionBox.innerHTML = "";
 
-        if (!topicKey || !topicDatabase[topicKey]) {
-            // 没有匹配到，显示建议
-            grid.innerHTML = "";
-            const suggestions = getSuggestions();
+        // 小红书列
+        let xhsItems = [];
+        if (topicKey && topicDatabase[topicKey]) {
+            xhsItems = topicDatabase[topicKey].xiaohongshu;
+        }
+        grid.insertAdjacentHTML('beforeend', renderStaticColumn('xiaohongshu', xhsItems));
+
+        // B站列（实时加载）
+        const keyword = rawQuery || topicKey || '';
+        biliState = { keyword, offset: 0, loading: false, allVideos: [] };
+        renderBilibiliColumn();
+        if (keyword) loadBilibiliData();
+
+        // 抖音列
+        let dyItems = [];
+        if (topicKey && topicDatabase[topicKey]) {
+            dyItems = topicDatabase[topicKey].douyin;
+        }
+        grid.insertAdjacentHTML('beforeend', renderStaticColumn('douyin', dyItems));
+
+        // 未匹配到主题时显示建议
+        if (!topicKey && !rawQuery) {
+            const suggestions = Object.keys(topicDatabase);
             suggestionBox.innerHTML = `
-                🔔 未找到匹配主题，试试以下话题：
-                ${suggestions.map(s => `<span class="topic-tag" data-topic="${s}" style="cursor:pointer;margin:4px;">${s}</span>`).join(" ")}
+                💡 热门话题：${suggestions.map(s => `<span class="topic-tag" data-topic="${s}" style="cursor:pointer;margin:4px;">${s}</span>`).join(" ")}
             `;
-            // 给建议标签绑定点击
             suggestionBox.querySelectorAll(".topic-tag").forEach(tag => {
                 tag.addEventListener("click", function() {
                     const topic = this.getAttribute("data-topic");
@@ -615,42 +735,26 @@
                     performSearch();
                 });
             });
-            return;
         }
-
-        const data = topicDatabase[topicKey];
-        const platforms = ["xiaohongshu", "bilibili", "douyin"];
-        let html = "";
-        platforms.forEach(p => {
-            html += renderPlatformColumn(p, data[p]);
-        });
-        grid.innerHTML = html;
-        suggestionBox.innerHTML = "";
-
     }
 
     // ============================================================
     // 🚀 执行搜索
     // ============================================================
     function performSearch() {
-        const query = document.getElementById("searchInput").value;
+        const query = document.getElementById("searchInput").value.trim();
         const topicKey = findMatchingTopic(query);
-        renderAll(topicKey);
+        renderAll(topicKey, query);
     }
 
     // ============================================================
-    // 🎬 初始化 & 事件绑定
+    // 🎬 初始化
     // ============================================================
     function init() {
-        // 搜索按钮点击
         document.getElementById("searchBtn").addEventListener("click", performSearch);
-
-        // 回车键搜索
         document.getElementById("searchInput").addEventListener("keydown", function(e) {
             if (e.key === "Enter") performSearch();
         });
-
-        // 话题标签点击
         document.querySelectorAll("#topicTags .topic-tag").forEach(tag => {
             tag.addEventListener("click", function() {
                 const topic = this.getAttribute("data-topic");
@@ -658,23 +762,9 @@
                 performSearch();
             });
         });
-
-        // 默认显示全部（显示第一个主题作为示例）
-        renderAll(null);
-        const suggestions = getSuggestions();
-        document.getElementById("suggestionBox").innerHTML = `
-            💡 热门话题：${suggestions.map(s => `<span class="topic-tag" data-topic="${s}" style="cursor:pointer;margin:4px;">${s}</span>`).join(" ")}
-        `;
-        document.querySelectorAll("#suggestionBox .topic-tag").forEach(tag => {
-            tag.addEventListener("click", function() {
-                const topic = this.getAttribute("data-topic");
-                document.getElementById("searchInput").value = topic;
-                performSearch();
-            });
-        });
+        renderAll(null, '');
     }
 
-    // 页面加载完成后初始化
     document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
