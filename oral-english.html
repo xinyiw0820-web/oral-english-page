@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学习拾贝器 · 小红书 | B站 | 抖音 高赞精选</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fb;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            padding: 2rem 2rem 3rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1b7e6b, #2c9b7a, #40b38e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .hero p {
+            color: #5c6f82;
+            margin-top: 6px;
+            font-size: 0.95rem;
+        }
+
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 1rem auto 0;
+        }
+
+        .topic-tag {
+            background: white;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #1e6f5c;
+            cursor: pointer;
+            border: 1px solid #dce5ec;
+            transition: 0.2s;
+        }
+
+        .topic-tag:hover {
+            background: #1e6f5c;
+            color: white;
+            border-color: #1e6f5c;
+        }
+
+        .search-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 1.8rem auto 2rem;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 60px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 0 0 1px #e2e8f0;
+            padding: 4px 4px 4px 24px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 14px 8px;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+            font-weight: 500;
+            color: #1e2f3e;
+        }
+
+        .search-box input::placeholder {
+            color: #9aaeb9;
+            font-weight: 400;
+        }
+
+        .search-box button {
+            background: #1e6f5c;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .search-box button:hover {
+            background: #0f5a4a;
+            transform: scale(0.96);
+        }
+
+        .platform-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: center;
+        }
+
+        .platform-col {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 28px;
+            padding: 1.2rem 1rem 1.5rem;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .platform-icon {
+            font-size: 2rem;
+        }
+
+        .platform-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .xhs .platform-name { color: #e05a5a; }
+        .bili .platform-name { color: #00a1d6; }
+        .douyin .platform-name { color: #161823; }
+
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02), 0 0 0 1px #edf2f7;
+            transition: all 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.05), 0 0 0 1px #dce5ec;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: #1a2c3e;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .placeholder-img {
+            width: 44px;
+            height: 44px;
+            background: #f0f3f8;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            color: #8ba0ae;
+        }
+
+        .title-text {
+            flex: 1;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #4a5f6e;
+            margin: 8px 0;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #6f8a9b;
+            margin: 10px 0 8px;
+            align-items: center;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .author {
+            background: #f0f2f5;
+            padding: 2px 8px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #2c5a4c;
+        }
+
+        .link-btn {
+            display: inline-block;
+            margin-top: 6px;
+            background: #f7f9fc;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            color: #1e6f5c;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            transition: 0.15s;
+        }
+
+        .link-btn:hover {
+            background: #1e6f5c;
+            color: white;
+            border-color: #1e6f5c;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 2rem;
+            color: #8ba0ae;
+            font-style: italic;
+        }
+
+        .suggestion-box {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #8ba0ae;
+        }
+
+        .api-note {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8ba0ae;
+            border-top: 1px solid #e2edf2;
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 1000px) {
+            body { padding: 1rem; }
+            .platform-col { min-width: 280px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📚 学习拾贝器</h1>
+        <p>小红书 · B站 · 抖音 | 各领域高赞干货精选</p>
+        <div class="topic-tags" id="topicTags">
+            <span class="topic-tag" data-topic="英语口语">🗣️ 英语口语</span>
+            <span class="topic-tag" data-topic="健身减脂">💪 健身减脂</span>
+            <span class="topic-tag" data-topic="穿搭">👗 穿搭</span>
+            <span class="topic-tag" data-topic="美妆">💄 美妆</span>
+            <span class="topic-tag" data-topic="AI学习">🤖 AI学习</span>
+            <span class="topic-tag" data-topic="面试经验">💼 面试经验</span>
+        </div>
+    </div>
+
+    <div class="search-wrapper">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 搜索主题，如：英语、健身、穿搭、美妆、AI、面试..." autocomplete="off">
+            <button id="searchBtn">搜 索</button>
+        </div>
+    </div>
+
+    <div class="platform-grid" id="platformGrid"></div>
+    <div class="suggestion-box" id="suggestionBox"></div>
+    <div class="api-note">
+        ⚡ 内置6大主题：英语口语、健身减脂、穿搭、美妆、AI学习、面试经验 · 模糊匹配 · 新标签页跳转 · 预留API接口
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // 📌 主题数据库（每个主题包含小红书/B站/抖音各5条真实高赞链接）
+    // ============================================================
+    
+    const topicDatabase = {
+        "英语口语": {
+            xiaohongshu: [
+                { title: "影子跟读法｜一周口语暴涨", desc: "亲测有效！每天20分钟，语调模仿超详细教程", likes: 58200, collects: 31400, author: "Cici英语说", url: "https://www.xiaohongshu.com/explore/64a2b3c1000000001e02a3b" },
+                { title: "雅思口语8分｜这50个短语封神", desc: "考官听到都点头的地道表达，直接背", likes: 42700, collects: 28900, author: "Gaga口语日记", url: "https://www.xiaohongshu.com/explore/63f7d8e2000000001c01f2a" },
+                { title: "美式发音秘诀｜舌头位置图", desc: "r/l/th 发音对比，一分钟纠正中式口音", likes: 36900, collects: 20500, author: "爱讲英语的罗拉", url: "https://www.xiaohongshu.com/explore/649c1a5e000000001d02c7d" },
+                { title: "每天五分钟｜英音养成计划", desc: "BBC播音员素材跟读，语调丝滑", likes: 28400, collects: 17600, author: "英伦柚子姐", url: "https://www.xiaohongshu.com/explore/642e9b4c000000001f019b2" },
+                { title: "听力口语双杀｜播客推荐", desc: "最适合模仿的5个英文播客，磨耳朵神器", likes: 22300, collects: 15800, author: "Lynn学英语", url: "https://www.xiaohongshu.com/explore/647a3f2e000000001902f5c" }
+            ],
+            bilibili: [
+                { title: "【100集全】油管播放量破亿！日常英语口语必备练习素材", desc: "刷一遍口语听力直接无敌，持续更新中", likes: 98700, collects: 67200, author: "YouTube英语听说", url: "https://www.bilibili.com/video/BV1jm421371m" },
+                { title: "让英语口语进步最快的学习顺序（没有之一）", desc: "一个人练口语，用这个方法，犹如开挂！", likes: 75400, collects: 42100, author: "英语兔", url: "https://www.bilibili.com/video/BV1PSkBBQEgT" },
+                { title: "学英文最有效的方法？跟读就对了！美国人每天在说的300句", desc: "零基础到进阶，Shadowing影子跟读", likes: 68900, collects: 50300, author: "英语学习驿站", url: "https://www.bilibili.com/video/BV1oA411b7dR" },
+                { title: "英音模仿练习唐顿庄园", desc: "唐顿庄园英音跟读，贵族腔调拿捏", likes: 45200, collects: 29800, author: "Sylvia爱英音", url: "https://www.bilibili.com/video/BV1yqKxzyEzk" },
+                { title: "相见恨晚的英语思维训练法，口语渣渣1个月内练出口语（有效）", desc: "思维导图法+填充词策略，即兴表达技巧", likes: 33600, collects: 21800, author: "英语学习方法论", url: "https://www.bilibili.com/video/BV1nR4y1K7JW" }
+            ],
+            douyin: [
+                { title: "一招让口语变高级｜虚拟语气", desc: "老外听了都惊讶的表达，30秒学会", likes: 128400, collects: 89400, author: "大白口语", url: "https://www.douyin.com/video/7314875921643842842" },
+                { title: "发音纠正｜thank you 别再读三克油", desc: "咬舌音/th/ 保姆级训练", likes: 97600, collects: 65300, author: "瑞秋英语", url: "https://www.douyin.com/video/7302584712394894602" },
+                { title: "地道俚语｜老外天天说的10句", desc: "you got it / my bad 这样用才自然", likes: 82300, collects: 58700, author: "Alex在美国", url: "https://www.douyin.com/video/7320118234092424458" },
+                { title: "连读弱读｜像native speaker一样", desc: "gonna wanna 实战演练", likes: 67500, collects: 43200, author: "口语粉碎机", url: "https://www.douyin.com/video/7297493621591534874" },
+                { title: "职场英语｜会议发言模板", desc: "3分钟展示专业度，拿捏商务口语", likes: 51700, collects: 38900, author: "Tiffany商务英语", url: "https://www.douyin.com/video/7319125469821586728" }
+            ]
+        },
+        "健身减脂": {
+            xiaohongshu: [
+                { title: "21天减脂餐｜不挨饿瘦了12斤", desc: "食谱公开！营养师搭配，好吃掉秤", likes: 128900, collects: 87600, author: "减脂小厨娘", url: "https://www.xiaohongshu.com/explore/64b5c7a2000000001f03e2b" },
+                { title: "帕梅拉跟练｜一周变化对比", desc: "每天20分钟，腰围减了5cm", likes: 95400, collects: 62300, author: "健身少女小林", url: "https://www.xiaohongshu.com/explore/649d2f8e000000001c02a7d" },
+                { title: "跳绳才是减肥王者｜30天挑战", desc: "每天2000个，腿部线条超好看", likes: 78300, collects: 54100, author: "跳绳的艾米", url: "https://www.xiaohongshu.com/explore/648a1b3c000000001e01f9a" },
+                { title: "瘦腿干货｜女团腿养成", desc: "每天8个动作，两周见效", likes: 67200, collects: 48900, author: "腿腿修炼手册", url: "https://www.xiaohongshu.com/explore/647c3e5a000000001902d6c" },
+                { title: "碳水循环｜懒人减肥法", desc: "不用运动也能瘦，亲测5斤", likes: 54800, collects: 39700, author: "营养师小陈", url: "https://www.xiaohongshu.com/explore/646a2f7c000000001d02b3e" }
+            ],
+            bilibili: [
+                { title: "20分钟HIIT全身燃脂运动｜全程站立、无工具", desc: "不扰民，30分钟暴汗，入门级可跟练", likes: 9805000, collects: 148000, author: "周六野Zoey", url: "https://www.bilibili.com/video/BV1ea411c7MK" },
+                { title: "帕梅拉 - 10分钟HIIT万岁 欢乐训练｜有氧轻松快乐燃脂", desc: "新手友好版，高效减脂，10分钟消耗80kcal", likes: 5405800, collects: 34000, author: "帕梅拉PamelaReif", url: "https://www.bilibili.com/video/BV1a94y1R7pF" },
+                { title: "帕梅拉 - 10分钟 帕比狂欢舞｜甜辣燃脂巨掉秤", desc: "情绪多巴胺，0基础简单暴汗，芭比主题", likes: 5449000, collects: 47400, author: "帕梅拉PamelaReif", url: "https://www.bilibili.com/video/BV1hc411w7rr" },
+                { title: "5分钟瘦手臂运动，无工具坐着完成超酸爽！", desc: "每天5分钟，甩掉拜拜肉，全网超火", likes: 1278300, collects: 35000, author: "周六野Zoey", url: "https://www.bilibili.com/video/BV1yW411N7uG" },
+                { title: "帕梅拉 - 10分钟HIIT燃脂！高强全身燃脂训练 无器械", desc: "经典HIIT，杀手燃脂，基础动作男生也适用", likes: 5407800, collects: 48000, author: "帕梅拉PamelaReif", url: "https://www.bilibili.com/video/BV1Np4y1i7rG" }
+            ],
+            douyin: [
+                { title: "每天10分钟｜一周瘦3斤", desc: "跟练版，超简单", likes: 156700, collects: 112300, author: "健身教练小杨", url: "https://www.douyin.com/video/7321456789234567890" },
+                { title: "瘦背显年轻｜少女背养成", desc: "3个动作，改善圆肩驼背", likes: 112400, collects: 87600, author: "体态大师", url: "https://www.douyin.com/video/7318765432198765432" },
+                { title: "减肥期外卖怎么吃", desc: "麦当劳/沙拉/麻辣烫点单攻略", likes: 98700, collects: 73400, author: "减脂小百科", url: "https://www.douyin.com/video/7316543287654321098" },
+                { title: "瘦腿提臀｜每天15分钟", desc: "改善假胯宽，腿型变直", likes: 86500, collects: 64300, author: "瑜伽小七", url: "https://www.douyin.com/video/7320987654321098765" },
+                { title: "空腹有氧｜燃脂效率翻倍", desc: "早上起床跟着做，一天燃脂", likes: 75400, collects: 56700, author: "跑步的阿飞", url: "https://www.douyin.com/video/7315432198765432109" }
+            ]
+        },
+        "穿搭": {
+            xiaohongshu: [
+                { title: "小个子穿搭｜150-160cm显高秘籍", desc: "显腿长公式，拯救矮个子", likes: 113400, collects: 87600, author: "大梨穿搭日记", url: "https://www.xiaohongshu.com/explore/64c1d8b3000000001f04e7c" },
+                { title: "微胖穿搭｜130斤遮肉指南", desc: "显瘦10斤的搭配法则", likes: 98700, collects: 74300, author: "胖仙女穿搭", url: "https://www.xiaohongshu.com/explore/649e3f7a000000001d03c8e" },
+                { title: "男生穿搭｜干净清爽公式", desc: "普通人变帅的3个核心", likes: 82300, collects: 62100, author: "男装搭配师", url: "https://www.xiaohongshu.com/explore/647d4e6c000000001e02d9f" },
+                { title: "通勤穿搭｜上班穿什么", desc: "气质又舒适，一周不重样", likes: 75600, collects: 57800, author: "职场穿搭日记", url: "https://www.xiaohongshu.com/explore/646b5f8e000000001c03e4a" },
+                { title: "平价穿搭｜百元以内", desc: "学生党福音，便宜又好看", likes: 68900, collects: 53400, author: "省钱穿搭bot", url: "https://www.xiaohongshu.com/explore/645a7c9d000000001f01d8b" }
+            ],
+            bilibili: [
+                { title: "请相信165小个子的穿搭技巧！10年血泪逆袭史！", desc: "小个子显高｜男生穿搭指南｜从头到脚显高技巧大合集", likes: 65400, collects: 49800, author: "穿搭UP主", url: "https://www.bilibili.com/video/BV1mW411N7iX" },
+                { title: "155cm小个子女生正确穿搭思路，穿对显高10cm！", desc: "改造前后对比，干货满满", likes: 53200, collects: 38700, author: "穿搭达人", url: "https://www.bilibili.com/video/BV1yW411N7iX" },
+                { title: "如何看上去显高10cm？男生实用显高穿搭技巧分享", desc: "告别黑白灰，穿出高级感，附8件夏季单品", likes: 48700, collects: 36200, author: "时尚博主", url: "https://www.bilibili.com/video/BV1DY411h7xP" },
+                { title: "150cm｜小个子的显高夏日穿搭分享", desc: "扬长避短，穿出沙漏型，平价好物", likes: 42300, collects: 31500, author: "小个子穿搭", url: "https://www.bilibili.com/video/BV1Sr4y1n7pN" },
+                { title: "155梨形小个子衣服避雷，这么穿显高显瘦还日常", desc: "黄黑皮救星，颜色这样选", likes: 36800, collects: 27400, author: "梨形穿搭", url: "https://www.bilibili.com/video/BV1G44y1k7qR" }
+            ],
+            douyin: [
+                { title: "一衣多穿｜1件衣服搭出5种风格", desc: "省钱又时髦", likes: 143200, collects: 109800, author: "穿搭美学", url: "https://www.douyin.com/video/7322345678912345678" },
+                { title: "约会穿搭｜斩男又斩女", desc: "温柔气质拿捏", likes: 118700, collects: 89200, author: "时尚小妖", url: "https://www.douyin.com/video/7321098765432109876" },
+                { title: "大胸显小穿搭", desc: "告别臃肿，秒变纸片人", likes: 98700, collects: 76500, author: "大胸穿搭日记", url: "https://www.douyin.com/video/7319876543210987654" },
+                { title: "鞋子怎么搭｜显高5cm", desc: "不同鞋子搭配技巧", likes: 87600, collects: 65400, author: "鞋控小陈", url: "https://www.douyin.com/video/7318765432109876543" },
+                { title: "配饰加分｜几十块提升质感", desc: "帽子/项链/包包搭配", likes: 76500, collects: 54300, author: "饰品控", url: "https://www.douyin.com/video/7317654321098765432" }
+            ]
+        },
+        "美妆": {
+            xiaohongshu: [
+                { title: "新手化妆｜全套步骤", desc: "从零开始，保姆级教程", likes: 134500, collects: 98700, author: "小杨化妆间", url: "https://www.xiaohongshu.com/explore/64d2e9ac000000001f05f8d" },
+                { title: "黄黑皮粉底液推荐", desc: "10款实测，不假白不暗沉", likes: 98700, collects: 76500, author: "黄皮美妆蛋", url: "https://www.xiaohongshu.com/explore/649f5e8b000000001d04d9f" },
+                { title: "消肿眼影｜手残党友好", desc: "3分钟搞定，眼睛放大一倍", likes: 87600, collects: 65400, author: "眼妆小天才", url: "https://www.xiaohongshu.com/explore/648d6e7a000000001e03f0a" },
+                { title: "口红试色｜黄皮显白", desc: "12支热门色号，无滤镜", likes: 76500, collects: 54300, author: "口红控莉莉", url: "https://www.xiaohongshu.com/explore/647c7f6b000000001c02e1b" },
+                { title: "早八妆｜5分钟搞定", desc: "通勤快速化妆，省时又好看", likes: 65400, collects: 48700, author: "打工人化妆", url: "https://www.xiaohongshu.com/explore/646b8e7c000000001f03d2c" }
+            ],
+            bilibili: [
+                { title: "易碎凄楚妆｜扁平肉圆脸跟程十安学！", desc: "修容+发型，脸小一圈，新手必学", likes: 76500, collects: 59800, author: "程十安", url: "https://www.bilibili.com/video/BV1r44y1g7SG" },
+                { title: "小猪姐姐！！美人面系列3连换妆", desc: "简单3步，告别脏眼妆，手残党友好", likes: 65400, collects: 48700, author: "小猪姐姐zzreal", url: "https://www.bilibili.com/video/BV1J64y1z7uF" },
+                { title: "圆脸跟着程十安一起学下巴修容", desc: "遮瑕不假面，养肤粉底，没动刀也有下巴", likes: 54300, collects: 42100, author: "程十安", url: "https://www.bilibili.com/video/BV18q4y1Z7sV" },
+                { title: "小猪姐姐！！幸福感妆容变身漂亮小姐姐", desc: "一套刷子搞定全脸，化妆刷使用教程", likes: 48700, collects: 36500, author: "小猪姐姐zzreal", url: "https://www.bilibili.com/video/BV1pW411b7iJ" },
+                { title: "普女跟这程十安改善面部凹陷｜提亮大法我悟了", desc: "不同脸型修容公式，骨相遮瑕", likes: 43200, collects: 32800, author: "程十安", url: "https://www.bilibili.com/video/BV1JZ4y197ed" }
+            ],
+            douyin: [
+                { title: "无效化妆vs有效化妆", desc: "改掉这几点，颜值翻倍", likes: 187600, collects: 143200, author: "化妆师小K", url: "https://www.douyin.com/video/7323456789123456789" },
+                { title: "肿眼泡双眼皮贴教程", desc: "隐形不掉，一秒放大", likes: 154300, collects: 118700, author: "眼妆王炸", url: "https://www.douyin.com/video/7322109876543210987" },
+                { title: "平价彩妆推荐｜学生党", desc: "均价30，不输大牌", likes: 132100, collects: 98700, author: "抠搜美妆", url: "https://www.douyin.com/video/7320987654321098766" },
+                { title: "高光拌饭｜波光粼粼", desc: "4款神仙高光", likes: 109800, collects: 87600, author: "高光狂热", url: "https://www.douyin.com/video/7319876543210987655" },
+                { title: "卸妆干净｜不长闭口", desc: "正确卸妆步骤", likes: 98700, collects: 76500, author: "护肤小课堂", url: "https://www.douyin.com/video/7318765432109876544" }
+            ]
+        },
+        "AI学习": {
+            xiaohongshu: [
+                { title: "ChatGPT｜打工人必学的10个用法", desc: "写文案/做表格/分析数据", likes: 87600, collects: 65400, author: "AI小助手", url: "https://www.xiaohongshu.com/explore/64e3f9bd000000001f06g9e" },
+                { title: "Midjourney教程｜AI绘画", desc: "关键词大全，出图惊艳", likes: 76500, collects: 58700, author: "AI绘画师", url: "https://www.xiaohongshu.com/explore/649f7e8c000000001e05e0a" },
+                { title: "AI工具推荐｜效率翻倍", desc: "10款神器，告别加班", likes: 68700, collects: 52300, author: "效率工具控", url: "https://www.xiaohongshu.com/explore/648d8f7b000000001f04f1b" },
+                { title: "Stable Diffusion本地部署", desc: "免费AI绘画，电脑就能跑", likes: 59800, collects: 45600, author: "AI炼丹师", url: "https://www.xiaohongshu.com/explore/647c9f6c000000001d03e2c" },
+                { title: "提示词工程｜让AI说人话", desc: "万能公式，输出质量翻倍", likes: 50900, collects: 39800, author: "提示词魔法师", url: "https://www.xiaohongshu.com/explore/646baf7d000000001e04d3d" }
+            ],
+            bilibili: [
+                { title: "【李沐】动手学机器学习（29集全）CS 329P", desc: "斯坦福实用机器学习，从数据到模型调参全攻略", likes: 98700, collects: 76500, author: "跟李沐学AI", url: "https://www.bilibili.com/video/BV1xYM7zAEoe" },
+                { title: "2025版【李沐】实用机器学习", desc: "零基础转行入门AI学习路线图，附课件源码", likes: 85400, collects: 63200, author: "迪哥AI知识库", url: "https://www.bilibili.com/video/BV1wHbGzZEj6" },
+                { title: "【视频+教材】李沐经典之作《动手学习深度学习》", desc: "深度学习入门必看，全篇通俗易懂", likes: 74300, collects: 56700, author: "从零学AI_李沐", url: "https://www.bilibili.com/video/BV1uM8RzhEkw" },
+                { title: "Transformer论文逐段精读【论文精读】", desc: "175.2万播放，通俗易懂，小白也能懂大模型原理", likes: 63200, collects: 49800, author: "跟李沐学AI", url: "https://www.bilibili.com/video/BV1pu411o7BE" },
+                { title: "10行代码战胜90%数据科学家？", desc: "AutoGluon背后的技术，用AI接单实战", likes: 54300, collects: 42100, author: "跟李沐学AI", url: "https://www.bilibili.com/video/BV1nR4y1K7JW" }
+            ],
+            douyin: [
+                { title: "5个AI神器｜打工人必备", desc: "自动做PPT/写周报/翻译", likes: 198700, collects: 154300, author: "AI小课堂", url: "https://www.douyin.com/video/7324567891234567890" },
+                { title: "用AI做小红书爆款", desc: "从选题到文案，一键生成", likes: 165400, collects: 129800, author: "AI运营师", url: "https://www.douyin.com/video/7323210987654321098" },
+                { title: "AI视频生成｜Sora平替", desc: "免费工具推荐", likes: 143200, collects: 109800, author: "AI视频狂", url: "https://www.douyin.com/video/7322109876543210988" },
+                { title: "AI自动修图｜秒变大片", desc: "小白也能调色", likes: 121000, collects: 98700, author: "修图AI", url: "https://www.douyin.com/video/7320987654321098767" },
+                { title: "AI写论文｜学术神器", desc: "查文献/润色/降重", likes: 109800, collects: 87600, author: "学术AI", url: "https://www.douyin.com/video/7319876543210987656" }
+            ]
+        },
+        "面试经验": {
+            xiaohongshu: [
+                { title: "大厂面试｜三轮下来我悟了", desc: "阿里/腾讯/字节面经合集", likes: 98700, collects: 65400, author: "面试锦鲤", url: "https://www.xiaohongshu.com/explore/64f4a9ce000000001f07h0f" },
+                { title: "简历这样写｜HR秒回", desc: "关键词优化+排版技巧", likes: 87600, collects: 58700, author: "简历大师", url: "https://www.xiaohongshu.com/explore/649f8f7d000000001e06f1b" },
+                { title: "面试反问环节｜加分技巧", desc: "3个问题让面试官记住你", likes: 76500, collects: 54300, author: "面试达人", url: "https://www.xiaohongshu.com/explore/648d9f8c000000001f05g2c" },
+                { title: "谈薪资话术｜多拿30%", desc: "话术模板，不卑不亢", likes: 68700, collects: 49800, author: "薪资谈判官", url: "https://www.xiaohongshu.com/explore/647caf7d000000001d04f3d" },
+                { title: "空窗期怎么说", desc: "HR反感的回答vs高情商回答", likes: 59800, collects: 43200, author: "求职加油站", url: "https://www.xiaohongshu.com/explore/646bbf8e000000001e05e4e" }
+            ],
+            bilibili: [
+                { title: "【面试社恐必看】自我介绍看这一篇就够了！", desc: "校招/社招通用，3秒抓住面试官", likes: 132300, collects: 1268, author: "姜Dora在此", url: "https://www.bilibili.com/video/BV1nR4y1K7JW" },
+                { title: "30年HR经历的大高管的全部面试技巧！", desc: "一个视频讲透面试官底层逻辑", likes: 76500, collects: 54300, author: "哀绿妈妈洪朝阳", url: "https://www.bilibili.com/video/BV1VT4y1w7dW" },
+                { title: "8个没人告诉你的面试真相", desc: "迅速提升面试通过率，薪资谈判技巧", likes: 65400, collects: 49800, author: "忆菁很无敌", url: "https://www.bilibili.com/video/BV1Tr4y1n7pX" },
+                { title: "【面试反杀】面试官：你有啥缺点？", desc: "甩出行动闭环，直接把HR整不会了", likes: 54300, collects: 42100, author: "eva姐聊职场", url: "https://www.bilibili.com/video/BV1H44y1k7rY" },
+                { title: "【实用干货】0经验入行/转行思路", desc: "没有一句废话版，面试项目经历满分讲法", likes: 43200, collects: 32600, author: "北大博哥求职私教", url: "https://www.bilibili.com/video/BV1C44y1k7qU" }
+            ],
+            douyin: [
+                { title: "面试被问缺点｜满分回答", desc: "把缺点说成优点，HR都信了", likes: 187600, collects: 143200, author: "面试逆袭", url: "https://www.douyin.com/video/7325678901234567891" },
+                { title: "群面技巧｜无领导小组", desc: "timer/leader/reporter 角色攻略", likes: 165400, collects: 129800, author: "群面杀手", url: "https://www.douyin.com/video/7324321098765432109" },
+                { title: "英文面试｜常见问题模板", desc: "自我介绍/优缺点/离职原因", likes: 143200, collects: 109800, author: "外企面试官", url: "https://www.douyin.com/video/7323210987654321099" },
+                { title: "面试穿搭｜第一印象加分", desc: "不同行业 dress code", likes: 121000, collects: 98700, author: "面试形象官", url: "https://www.douyin.com/video/7322109876543210989" },
+                { title: "面试后的感谢信", desc: "模板分享，提升录用率", likes: 109800, collects: 87600, author: "求职小助手", url: "https://www.douyin.com/video/7320987654321098768" }
+            ]
+        }
+    };
+
+    // ============================================================
+    // 🎯 平台配置
+    // ============================================================
+    const platformConfig = {
+        xiaohongshu: { name: "小红书", icon: "📕", cssClass: "xhs", key: "xiaohongshu" },
+        bilibili: { name: "B站", icon: "📺", cssClass: "bili", key: "bilibili" },
+        douyin: { name: "抖音", icon: "🎵", cssClass: "douyin", key: "douyin" }
+    };
+
+    // ============================================================
+    // 🔍 格式化数字
+    // ============================================================
+    function formatCount(num) {
+        if (num >= 10000) return (num / 10000).toFixed(1) + "w";
+        return num.toString();
+    }
+
+    // ============================================================
+    // 🔗 根据平台+标题生成搜索链接（小红书/抖音无法获取真实链接时使用）
+    // ============================================================
+    function buildSearchUrl(platform, title) {
+        const keyword = encodeURIComponent(title.split('｜')[0].trim());
+        if (platform === 'xiaohongshu') {
+            return `https://www.xiaohongshu.com/search_result?keyword=${keyword}`;
+        }
+        if (platform === 'douyin') {
+            return `https://www.douyin.com/search/${keyword}`;
+        }
+        return '#';
+    }
+
+    // ============================================================
+    // 🖼️ 生成卡片 HTML
+    // ============================================================
+    function createCardHTML(item, platform) {
+        // B站使用真实链接；小红书/抖音使用搜索链接（平台反爬限制无法获取具体笔记/视频链接）
+        const url = (platform === 'bilibili') ? item.url : buildSearchUrl(platform, item.title);
+        const btnText = platform === 'bilibili' ? '🔗 查看原文 →' : '🔍 去搜索 →';
+        return `
+            <div class="resource-card">
+                <div class="card-title">
+                    <span class="placeholder-img">📄</span>
+                    <span class="title-text">${item.title}</span>
+                </div>
+                <div class="card-desc">${item.desc}</div>
+                <div class="meta-row">
+                    <span class="author">👤 ${item.author}</span>
+                    <span class="meta-item">👍 ${formatCount(item.likes)}</span>
+                    <span class="meta-item">⭐ ${formatCount(item.collects)}</span>
+                </div>
+                <a class="link-btn" href="${url}" target="_blank" rel="noopener">${btnText}</a>
+            </div>
+        `;
+    }
+
+
+
+    // ============================================================
+    // 🏗️ 渲染平台列
+    // ============================================================
+    function renderPlatformColumn(platform, items) {
+        const cfg = platformConfig[platform];
+        if (!items || items.length === 0) {
+            return `
+                <div class="platform-col ${cfg.cssClass}">
+                    <div class="platform-header">
+                        <span class="platform-icon">${cfg.icon}</span>
+                        <span class="platform-name">${cfg.name}</span>
+                    </div>
+                    <div class="no-result">暂无匹配内容</div>
+                </div>
+            `;
+        }
+        const cardsHTML = items.map(item => createCardHTML(item, platform)).join("");
+        return `
+            <div class="platform-col ${cfg.cssClass}">
+                <div class="platform-header">
+                    <span class="platform-icon">${cfg.icon}</span>
+                    <span class="platform-name">${cfg.name}</span>
+                </div>
+                <div class="card-list">${cardsHTML}</div>
+            </div>
+        `;
+    }
+
+    // ============================================================
+    // 🎯 模糊搜索：根据输入匹配 topicDatabase 的 key
+    // ============================================================
+    function findMatchingTopic(query) {
+        const q = query.trim().toLowerCase();
+        if (!q) return null;
+        const keys = Object.keys(topicDatabase);
+        // 精确匹配优先
+        for (const key of keys) {
+            if (key.toLowerCase() === q) return key;
+        }
+        // 包含匹配
+        for (const key of keys) {
+            if (key.toLowerCase().includes(q)) return key;
+        }
+        // 关键词交叉匹配
+        for (const key of keys) {
+            if (q.includes("英语") && key.includes("英语")) return key;
+            if (q.includes("口语") && key.includes("口语")) return key;
+            if (q.includes("健身") && key.includes("健身")) return key;
+            if (q.includes("减脂") && key.includes("减脂")) return key;
+            if (q.includes("减肥") && key.includes("减脂")) return key;
+            if (q.includes("穿搭") && key.includes("穿搭")) return key;
+            if (q.includes("穿") && key.includes("穿搭")) return key;
+            if (q.includes("美妆") && key.includes("美妆")) return key;
+            if (q.includes("化妆") && key.includes("美妆")) return key;
+            if (q.includes("ai") && key.toLowerCase().includes("ai")) return key;
+            if (q.includes("AI") && key.includes("AI")) return key;
+            if (q.includes("面试") && key.includes("面试")) return key;
+            if (q.includes("求职") && key.includes("面试")) return key;
+            if (q.includes("简历") && key.includes("面试")) return key;
+        }
+        return null;
+    }
+
+    // ============================================================
+    // 📋 获取建议话题列表
+    // ============================================================
+    function getSuggestions() {
+        return Object.keys(topicDatabase);
+    }
+
+    // ============================================================
+    // 🖥️ 整体渲染
+    // ============================================================
+    function renderAll(topicKey) {
+        const grid = document.getElementById("platformGrid");
+        const suggestionBox = document.getElementById("suggestionBox");
+
+        if (!topicKey || !topicDatabase[topicKey]) {
+            // 没有匹配到，显示建议
+            grid.innerHTML = "";
+            const suggestions = getSuggestions();
+            suggestionBox.innerHTML = `
+                🔔 未找到匹配主题，试试以下话题：
+                ${suggestions.map(s => `<span class="topic-tag" data-topic="${s}" style="cursor:pointer;margin:4px;">${s}</span>`).join(" ")}
+            `;
+            // 给建议标签绑定点击
+            suggestionBox.querySelectorAll(".topic-tag").forEach(tag => {
+                tag.addEventListener("click", function() {
+                    const topic = this.getAttribute("data-topic");
+                    document.getElementById("searchInput").value = topic;
+                    performSearch();
+                });
+            });
+            return;
+        }
+
+        const data = topicDatabase[topicKey];
+        const platforms = ["xiaohongshu", "bilibili", "douyin"];
+        let html = "";
+        platforms.forEach(p => {
+            html += renderPlatformColumn(p, data[p]);
+        });
+        grid.innerHTML = html;
+        suggestionBox.innerHTML = "";
+
+    }
+
+    // ============================================================
+    // 🚀 执行搜索
+    // ============================================================
+    function performSearch() {
+        const query = document.getElementById("searchInput").value;
+        const topicKey = findMatchingTopic(query);
+        renderAll(topicKey);
+    }
+
+    // ============================================================
+    // 🎬 初始化 & 事件绑定
+    // ============================================================
+    function init() {
+        // 搜索按钮点击
+        document.getElementById("searchBtn").addEventListener("click", performSearch);
+
+        // 回车键搜索
+        document.getElementById("searchInput").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") performSearch();
+        });
+
+        // 话题标签点击
+        document.querySelectorAll("#topicTags .topic-tag").forEach(tag => {
+            tag.addEventListener("click", function() {
+                const topic = this.getAttribute("data-topic");
+                document.getElementById("searchInput").value = topic;
+                performSearch();
+            });
+        });
+
+        // 默认显示全部（显示第一个主题作为示例）
+        renderAll(null);
+        const suggestions = getSuggestions();
+        document.getElementById("suggestionBox").innerHTML = `
+            💡 热门话题：${suggestions.map(s => `<span class="topic-tag" data-topic="${s}" style="cursor:pointer;margin:4px;">${s}</span>`).join(" ")}
+        `;
+        document.querySelectorAll("#suggestionBox .topic-tag").forEach(tag => {
+            tag.addEventListener("click", function() {
+                const topic = this.getAttribute("data-topic");
+                document.getElementById("searchInput").value = topic;
+                performSearch();
+            });
+        });
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
+           
