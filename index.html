@@ -760,8 +760,8 @@
                         </select>
                     </div>
                     <div class="ai-input-area">
-                        <textarea id="ai-prompt" placeholder="输入你想学习的技能，如：英语口语、Python编程、摄影..." rows="2"></textarea>
-                        <button id="ai-generate-btn" class="ai-generate-btn">✨ 生成学习路径</button>
+                        <textarea id="ai-prompt" placeholder="输入你想问的问题，如：推荐Python入门资源、面试自我介绍怎么准备、帮我翻译..." rows="2"></textarea>
+                        <button id="ai-generate-btn" class="ai-generate-btn">✨ 发送提问</button>
                     </div>
                     <div class="ai-result" id="ai-result"></div>
                     <div class="loading-more" id="ai-loading" style="display:none">
@@ -806,10 +806,10 @@
         resultEl.innerHTML = '';
 
         try {
-            const res = await fetch(`${API_BASE}/api/ai/generate`, {
+            const res = await fetch(`${API_BASE}/api/ai/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: aiState.selectedModel, topic })
+                body: JSON.stringify({ model: aiState.selectedModel, message: topic })
             });
             if (!res.ok) throw new Error('API请求失败');
             const data = await res.json();
