@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学习拾贝器 · 小红书 | B站 | AI学习助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fb;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            padding: 2rem 2rem 3rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1b7e6b, #2c9b7a, #40b38e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .hero p {
+            color: #5c6f82;
+            margin-top: 6px;
+            font-size: 0.95rem;
+        }
+
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 1rem auto 0;
+        }
+
+        .topic-tag {
+            background: white;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #1e6f5c;
+            cursor: pointer;
+            border: 1px solid #dce5ec;
+            transition: 0.2s;
+        }
+
+        .topic-tag:hover {
+            background: #1e6f5c;
+            color: white;
+            border-color: #1e6f5c;
+        }
+
+        .search-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 1.8rem auto 2rem;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 60px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 0 0 1px #e2e8f0;
+            padding: 4px 4px 4px 24px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 14px 8px;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+            font-weight: 500;
+            color: #1e2f3e;
+        }
+
+        .search-box input::placeholder {
+            color: #9aaeb9;
+            font-weight: 400;
+        }
+
+        .search-box button {
+            background: #1e6f5c;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .search-box button:hover {
+            background: #0f5a4a;
+            transform: scale(0.96);
+        }
+
+        .platform-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: center;
+        }
+
+        .platform-col {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 28px;
+            padding: 1.2rem 1rem 1.5rem;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .refresh-btn {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s, transform 0.2s;
+            color: #6f8a9b;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(0, 161, 214, 0.1);
+            color: #00a1d6;
+            transform: rotate(30deg);
+        }
+
+        .refresh-btn.spinning {
+            animation: spin 0.8s linear infinite;
+            pointer-events: none;
+            color: #00a1d6;
+        }
+
+        .model-select {
+            margin-left: auto;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #dce5ec;
+            background: white;
+            font-size: 0.75rem;
+            color: #4a5f6e;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .ai-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .ai-input-area textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #dce5ec;
+            background: white;
+            font-size: 0.85rem;
+            color: #1a2c3e;
+            resize: vertical;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .ai-input-area textarea:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .ai-generate-btn {
+            align-self: flex-start;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .ai-generate-btn:hover {
+            background: #7c3aed;
+            transform: scale(0.96);
+        }
+
+        .ai-generate-btn:disabled {
+            background: #c4b5fd;
+            cursor: not-allowed;
+        }
+
+        .ai-result-content h3 {
+            border-bottom: 2px solid #e9d5ff;
+            padding-bottom: 4px;
+        }
+
+        .ai-result-content li {
+            list-style: none;
+            position: relative;
+        }
+
+        .ai-result-content li::before {
+            content: "•";
+            color: #8b5cf6;
+            position: absolute;
+            left: -12px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .platform-icon {
+            font-size: 2rem;
+        }
+
+        .platform-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .xhs .platform-name { color: #e05a5a; }
+        .bili .platform-name { color: #00a1d6; }
+        .ai .platform-name { color: #8b5cf6; }
+
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02), 0 0 0 1px #edf2f7;
+            transition: all 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.05), 0 0 0 1px #dce5ec;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: #1a2c3e;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .placeholder-img {
+            width: 44px;
+            height: 44px;
+            background: #f0f3f8;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            color: #8ba0ae;
+        }
+
+        .title-text {
+            flex: 1;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #4a5f6e;
+            margin: 8px 0;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #6f8a9b;
+            margin: 10px 0 8px;
+            align-items: center;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .author {
+            background: #f0f2f5;
+            padding: 2px 8px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #2c5a4c;
+        }
+
+        .link-btn {
+            display: inline-block;
+            margin-top: 6px;
+            background: #f7f9fc;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            color: #1e6f5c;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            transition: 0.15s;
+        }
+
+        .link-btn:hover {
+            background: #1e6f5c;
+            color: white;
+            border-color: #1e6f5c;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 2rem;
+            color: #8ba0ae;
+            font-style: italic;
+        }
+
+        .suggestion-box {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #8ba0ae;
+        }
+
+        .api-note {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8ba0ae;
+            border-top: 1px solid #e2edf2;
+            padding-top: 1.5rem;
+        }
+
+        .loading-more {
+            text-align: center;
+            padding: 1rem;
+            color: #8ba0ae;
+            font-size: 0.8rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #1e6f5c;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1000px) {
+            body { padding: 1rem; }
+            .platform-col { min-width: 280px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📚 学习拾贝器</h1>
+        <p>小红书 · B站 · AI学习助手 | 各领域高赞干货精选</p>
+        <div class="topic-tags" id="topicTags">
+            <span class="topic-tag" data-topic="英语口语">🗣️ 英语口语</span>
+            <span class="topic-tag" data-topic="健身减脂">💪 健身减脂</span>
+            <span class="topic-tag" data-topic="穿搭">👗 穿搭</span>
+            <span class="topic-tag" data-topic="美妆">💄 美妆</span>
+            <span class="topic-tag" data-topic="AI学习">🤖 AI学习</span>
+            <span class="topic-tag" data-topic="面试经验">💼 面试经验</span>
+        </div>
+    </div>
+
+    <div class="search-wrapper">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 搜索主题，如：英语、健身、穿搭、美妆、AI、面试..." autocomplete="off">
+            <button id="searchBtn">搜 索</button>
+        </div>
+    </div>
+
+    <div class="platform-grid" id="platformGrid"></div>
+    <div class="suggestion-box" id="suggestionBox"></div>
+    <div class="api-note">
+        ⚡ 内置6大主题：英语口语、健身减脂、穿搭、美妆、AI学习、面试经验 · 模糊匹配 · 新标签页跳转 · 预留API接口
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // 📌 后端API地址（部署后替换为公网地址）
+    // ============================================================
+    // const API_BASE = 'http://localhost:3001';  // 本地开发用
+    const API_BASE = 'https://oral-english-backend.vercel.app';  // 生产环境
+
+    // ============================================================
+    // 📌 静态主题数据库（小红书，B站已改为实时爬取）
+    // ============================================================
+    const topicDatabase = {
+        "英语口语": {
+            xiaohongshu: [
+                { title: "影子跟读法｜一周口语暴涨", desc: "亲测有效！每天20分钟，语调模仿超详细教程", likes: 58200, collects: 31400, author: "Cici英语说", url: "https://www.xiaohongshu.com/explore/64a2b3c1000000001e02a3b" },
+                { title: "雅思口语8分｜这50个短语封神", desc: "考官听到都点头的地道表达，直接背", likes: 42700, collects: 28900, author: "Gaga口语日记", url: "https://www.xiaohongshu.com/explore/63f7d8e2000000001c01f2a" },
+                { title: "美式发音秘诀｜舌头位置图", desc: "r/l/th 发音对比，一分钟纠正中式口音", likes: 36900, collects: 20500, author: "爱讲英语的罗拉", url: "https://www.xiaohongshu.com/explore/649c1a5e000000001d02c7d" },
+                { title: "每天五分钟｜英音养成计划", desc: "BBC播音员素材跟读，语调丝滑", likes: 28400, collects: 17600, author: "英伦柚子姐", url: "https://www.xiaohongshu.com/explore/642e9b4c000000001f019b2" },
+                { title: "听力口语双杀｜播客推荐", desc: "最适合模仿的5个英文播客，磨耳朵神器", likes: 22300, collects: 15800, author: "Lynn学英语", url: "https://www.xiaohongshu.com/explore/647a3f2e000000001902f5c" }
+            ]
+        },
+        "健身减脂": {
+            xiaohongshu: [
+                { title: "21天减脂餐｜不挨饿瘦了12斤", desc: "食谱公开！营养师搭配，好吃掉秤", likes: 128900, collects: 87600, author: "减脂小厨娘", url: "https://www.xiaohongshu.com/explore/64b5c7a2000000001f03e2b" },
+                { title: "帕梅拉跟练｜一周变化对比", desc: "每天20分钟，腰围减了5cm", likes: 95400, collects: 62300, author: "健身少女小林", url: "https://www.xiaohongshu.com/explore/649d2f8e000000001c02a7d" },
+                { title: "跳绳才是减肥王者｜30天挑战", desc: "每天2000个，腿部线条超好看", likes: 78300, collects: 54100, author: "跳绳的艾米", url: "https://www.xiaohongshu.com/explore/648a1b3c000000001e01f9a" },
+                { title: "瘦腿干货｜女团腿养成", desc: "每天8个动作，两周见效", likes: 67200, collects: 48900, author: "腿腿修炼手册", url: "https://www.xiaohongshu.com/explore/647c3e5a000000001902d6c" },
+                { title: "碳水循环｜懒人减肥法", desc: "不用运动也能瘦，亲测5斤", likes: 54800, collects: 39700, author: "营养师小陈", url: "https://www.xiaohongshu.com/explore/646a2f7c000000001d02b3e" }
+            ]
+        },
+        "穿搭": {
+            xiaohongshu: [
+                { title: "小个子穿搭｜150-160cm显高秘籍", desc: "显腿长公式，拯救矮个子", likes: 113400, collects: 87600, author: "大梨穿搭日记", url: "https://www.xiaohongshu.com/explore/64c1d8b3000000001f04e7c" },
+                { title: "微胖穿搭｜130斤遮肉指南", desc: "显瘦10斤的搭配法则", likes: 98700, collects: 74300, author: "胖仙女穿搭", url: "https://www.xiaohongshu.com/explore/649e3f7a000000001d03c8e" },
+                { title: "男生穿搭｜干净清爽公式", desc: "普通人变帅的3个核心", likes: 82300, collects: 62100, author: "男装搭配师", url: "https://www.xiaohongshu.com/explore/647d4e6c000000001e02d9f" },
+                { title: "通勤穿搭｜上班穿什么", desc: "气质又舒适，一周不重样", likes: 75600, collects: 57800, author: "职场穿搭日记", url: "https://www.xiaohongshu.com/explore/646b5f8e000000001c03e4a" },
+                { title: "平价穿搭｜百元以内", desc: "学生党福音，便宜又好看", likes: 68900, collects: 53400, author: "省钱穿搭bot", url: "https://www.xiaohongshu.com/explore/645a7c9d000000001f01d8b" }
+            ]
+        },
+        "美妆": {
+            xiaohongshu: [
+                { title: "新手化妆｜全套步骤", desc: "从零开始，保姆级教程", likes: 134500, collects: 98700, author: "小杨化妆间", url: "https://www.xiaohongshu.com/explore/64d2e9ac000000001f05f8d" },
+                { title: "黄黑皮粉底液推荐", desc: "10款实测，不假白不暗沉", likes: 98700, collects: 76500, author: "黄皮美妆蛋", url: "https://www.xiaohongshu.com/explore/649f5e8b000000001d04d9f" },
+                { title: "消肿眼影｜手残党友好", desc: "3分钟搞定，眼睛放大一倍", likes: 87600, collects: 65400, author: "眼妆小天才", url: "https://www.xiaohongshu.com/explore/648d6e7a000000001e03f0a" },
+                { title: "口红试色｜黄皮显白", desc: "12支热门色号，无滤镜", likes: 76500, collects: 54300, author: "口红控莉莉", url: "https://www.xiaohongshu.com/explore/647c7f6b000000001c02e1b" },
+                { title: "早八妆｜5分钟搞定", desc: "通勤快速化妆，省时又好看", likes: 65400, collects: 48700, author: "打工人化妆", url: "https://www.xiaohongshu.com/explore/646b8e7c000000001f03d2c" }
+            ]
+        },
+        "AI学习": {
+            xiaohongshu: [
+                { title: "ChatGPT｜打工人必学的10个用法", desc: "写文案/做表格/分析数据", likes: 87600, collects: 65400, author: "AI小助手", url: "https://www.xiaohongshu.com/explore/64e3f9bd000000001f06g9e" },
+                { title: "Midjourney教程｜AI绘画", desc: "关键词大全，出图惊艳", likes: 76500, collects: 58700, author: "AI绘画师", url: "https://www.xiaohongshu.com/explore/649f7e8c000000001e05e0a" },
+                { title: "AI工具推荐｜效率翻倍", desc: "10款神器，告别加班", likes: 68700, collects: 52300, author: "效率工具控", url: "https://www.xiaohongshu.com/explore/648d8f7b000000001f04f1b" },
+                { title: "Stable Diffusion本地部署", desc: "免费AI绘画，电脑就能跑", likes: 59800, collects: 45600, author: "AI炼丹师", url: "https://www.xiaohongshu.com/explore/647c9f6c000000001d03e2c" },
+                { title: "提示词工程｜让AI说人话", desc: "万能公式，输出质量翻倍", likes: 50900, collects: 39800, author: "提示词魔法师", url: "https://www.xiaohongshu.com/explore/646baf7d000000001e04d3d" }
+            ]
+        },
+        "面试经验": {
+            xiaohongshu: [
+                { title: "大厂面试｜三轮下来我悟了", desc: "阿里/腾讯/字节面经合集", likes: 98700, collects: 65400, author: "面试锦鲤", url: "https://www.xiaohongshu.com/explore/64f4a9ce000000001f07h0f" },
+                { title: "简历这样写｜HR秒回", desc: "关键词优化+排版技巧", likes: 87600, collects: 58700, author: "简历大师", url: "https://www.xiaohongshu.com/explore/649f8f7d000000001e06f1b" },
+                { title: "面试反问环节｜加分技巧", desc: "3个问题让面试官记住你", likes: 76500, collects: 54300, author: "面试达人", url: "https://www.xiaohongshu.com/explore/648d9f8c000000001f05g2c" },
+                { title: "谈薪资话术｜多拿30%", desc: "话术模板，不卑不亢", likes: 68700, collects: 49800, author: "薪资谈判官", url: "https://www.xiaohongshu.com/explore/647caf7d000000001d04f3d" },
+                { title: "空窗期怎么说", desc: "HR反感的回答vs高情商回答", likes: 59800, collects: 43200, author: "求职加油站", url: "https://www.xiaohongshu.com/explore/646bbf8e000000001e05e4e" }
+            ]
+        }
+    };
+
+    const platformConfig = {
+        xiaohongshu: { name: "小红书", icon: "📕", cssClass: "xhs", key: "xiaohongshu" },
+        bilibili: { name: "B站", icon: "📺", cssClass: "bili", key: "bilibili" },
+        ai: { name: "AI学习助手", icon: "🤖", cssClass: "ai", key: "ai" }
+    };
+
+    // ============================================================
+    // 🔍 格式化数字
+    // ============================================================
+    function formatCount(num) {
+        if (num >= 10000) return (num / 10000).toFixed(1) + "w";
+        return num.toString();
+    }
+
+    // ============================================================
+    // 🔗 小红书搜索链接
+    // ============================================================
+    function buildSearchUrl(platform, title) {
+        const keyword = encodeURIComponent(title.split('｜')[0].trim());
+        if (platform === 'xiaohongshu') return `https://www.xiaohongshu.com/search_result?keyword=${keyword}`;
+        return '#';
+    }
+
+    // ============================================================
+    // 🖼️ 生成卡片 HTML
+    // ============================================================
+    function createCardHTML(item, platform) {
+        const url = item.url;
+        const btnText = platform === 'bilibili' ? '🔗 查看原文 →' : '🔍 去搜索 →';
+        return `
+            <div class="resource-card">
+                <div class="card-title">
+                    <span class="placeholder-img">📄</span>
+                    <span class="title-text">${item.title}</span>
+                </div>
+                <div class="card-desc">${item.desc}</div>
+                <div class="meta-row">
+                    <span class="author">👤 ${item.author}</span>
+                    <span class="meta-item">👍 ${formatCount(item.likes)}</span>
+                    <span class="meta-item">⭐ ${formatCount(item.collects)}</span>
+                </div>
+                <a class="link-btn" href="${url}" target="_blank" rel="noopener">${btnText}</a>
+            </div>
+        `;
+    }
+
+    // ============================================================
+    // 🏗️ 渲染小红书静态列
+    // ============================================================
+    function renderStaticColumn(platform, items) {
+        const cfg = platformConfig[platform];
+        if (!items || items.length === 0) {
+            return `
+                <div class="platform-col ${cfg.cssClass}">
+                    <div class="platform-header">
+                        <span class="platform-icon">${cfg.icon}</span>
+                        <span class="platform-name">${cfg.name}</span>
+                    </div>
+                    <div class="no-result">暂无匹配内容</div>
+                </div>
+            `;
+        }
+        const cardsHTML = items.map(item => createCardHTML(item, platform)).join("");
+        return `
+            <div class="platform-col ${cfg.cssClass}">
+                <div class="platform-header">
+                    <span class="platform-icon">${cfg.icon}</span>
+                    <span class="platform-name">${cfg.name}</span>
+                </div>
+                <div class="card-list">${cardsHTML}</div>
+            </div>
+        `;
+    }
+
+    // ============================================================
+    // 📺 B站实时渲染（窗口切换：每次5条，共50条）
+    // ============================================================
+    const BILI_PAGE_SIZE = 5;
+
+    let biliState = {
+        keyword: '',
+        offset: 0,
+        loading: false,
+        allVideos: [],
+    };
+
+    function getBiliWindowVideos() {
+        return biliState.allVideos.slice(biliState.offset, biliState.offset + BILI_PAGE_SIZE);
+    }
+
+    function renderBilibiliColumn() {
+        const cfg = platformConfig.bilibili;
+        const grid = document.getElementById("platformGrid");
+        let col = document.getElementById("bili-column");
+
+        if (!col) {
+            const html = `
+                <div class="platform-col ${cfg.cssClass}" id="bili-column">
+                    <div class="platform-header">
+                        <span class="platform-icon">${cfg.icon}</span>
+                        <span class="platform-name">${cfg.name}</span>
+                        <button class="refresh-btn" id="bili-refresh" title="换一批">🔄</button>
+                    </div>
+                    <div class="card-list" id="bili-list"></div>
+                    <div class="bili-pager" id="bili-pager"></div>
+                    <div class="loading-more" id="bili-loading" style="display:none">
+                        <span class="loading-spinner"></span>加载中...
+                    </div>
+                </div>
+            `;
+            if (grid.children.length >= 2) {
+                grid.insertAdjacentHTML('beforeend', html);
+            } else {
+                grid.insertAdjacentHTML('afterbegin', html);
+            }
+            col = document.getElementById("bili-column");
+            document.getElementById("bili-refresh").addEventListener('click', handleBiliRefresh);
+        }
+
+        const list = document.getElementById("bili-list");
+        const pager = document.getElementById("bili-pager");
+        const videos = getBiliWindowVideos();
+        const cardsHTML = videos.map(item => createCardHTML(item, 'bilibili')).join("");
+        list.innerHTML = cardsHTML || '<div class="no-result">暂无结果</div>';
+
+        if (biliState.allVideos.length > 0) {
+            const start = biliState.offset + 1;
+            const end = Math.min(biliState.offset + BILI_PAGE_SIZE, biliState.allVideos.length);
+            pager.innerHTML = `<span style="font-size:0.75rem;color:#6f8a9b;text-align:center;display:block;padding:8px 0;">第 ${start}-${end} 条 / 共 ${biliState.allVideos.length} 条（按点赞排序）</span>`;
+        } else {
+            pager.innerHTML = '';
+        }
+    }
+
+    async function fetchBilibiliVideos(keyword) {
+        const res = await fetch(`${API_BASE}/api/bilibili/search?keyword=${encodeURIComponent(keyword)}&_t=${Date.now()}`);
+        if (!res.ok) throw new Error('fetch failed');
+        return res.json();
+    }
+
+    function showBiliError(msg) {
+        const list = document.getElementById("bili-list");
+        if (list) {
+            list.innerHTML = `<div class="no-result" style="color:#e05a5a">⚠️ ${msg}</div>`;
+        }
+    }
+
+    async function loadBilibiliData() {
+        if (biliState.loading) return;
+        biliState.loading = true;
+        document.getElementById("bili-loading").style.display = "block";
+        const refreshBtn = document.getElementById("bili-refresh");
+        if (refreshBtn) refreshBtn.classList.add("spinning");
+
+        try {
+            console.log('[B站] 请求 keyword=', biliState.keyword);
+            const data = await fetchBilibiliVideos(biliState.keyword);
+            console.log('[B站] 返回', data.videos.length, '条');
+            biliState.allVideos = data.videos;
+            biliState.offset = 0;
+            renderBilibiliColumn();
+        } catch (e) {
+            console.error('[B站] 加载失败:', e);
+            showBiliError('加载失败，请检查后端服务是否运行 (' + e.message + ')');
+        } finally {
+            biliState.loading = false;
+            document.getElementById("bili-loading").style.display = "none";
+            if (refreshBtn) refreshBtn.classList.remove("spinning");
+        }
+    }
+
+    function handleBiliRefresh() {
+        if (biliState.loading) return;
+        const nextOffset = biliState.offset + BILI_PAGE_SIZE;
+        if (nextOffset >= biliState.allVideos.length) {
+            // 已看完，重新请求API
+            loadBilibiliData();
+        } else {
+            // 显示下一批
+            biliState.offset = nextOffset;
+            renderBilibiliColumn();
+        }
+    }
+
+    // ============================================================
+    // 🎯 模糊搜索
+    // ============================================================
+    function findMatchingTopic(query) {
+        const q = query.trim().toLowerCase();
+        if (!q) return null;
+        const keys = Object.keys(topicDatabase);
+        for (const key of keys) if (key.toLowerCase() === q) return key;
+        for (const key of keys) if (key.toLowerCase().includes(q)) return key;
+        for (const key of keys) {
+            if (q.includes("英语") && key.includes("英语")) return key;
+            if (q.includes("口语") && key.includes("口语")) return key;
+            if (q.includes("健身") && key.includes("健身")) return key;
+            if (q.includes("减脂") && key.includes("减脂")) return key;
+            if (q.includes("减肥") && key.includes("减脂")) return key;
+            if (q.includes("穿搭") && key.includes("穿搭")) return key;
+            if (q.includes("穿") && key.includes("穿搭")) return key;
+            if (q.includes("美妆") && key.includes("美妆")) return key;
+            if (q.includes("化妆") && key.includes("美妆")) return key;
+            if (q.includes("ai") && key.toLowerCase().includes("ai")) return key;
+            if (q.includes("AI") && key.includes("AI")) return key;
+            if (q.includes("面试") && key.includes("面试")) return key;
+            if (q.includes("求职") && key.includes("面试")) return key;
+            if (q.includes("简历") && key.includes("面试")) return key;
+        }
+        return null;
+    }
+
+    // ============================================================
+    // 🤖 AI学习助手列
+    // ============================================================
+    const AI_MODELS = [
+        { id: 'zhipu', name: '智谱 GLM-4-Flash', desc: '永久免费 · 中文强' },
+        { id: 'siliconflow', name: '硅基 DeepSeek-V3', desc: '1000 RPM · 推理强' },
+        { id: 'kimi', name: 'Kimi K2.5', desc: '256K上下文 · 长文本' },
+        { id: 'openrouter', name: 'OpenRouter', desc: '多模型聚合 · 免费额度' },
+    ];
+
+    let aiState = {
+        selectedModel: 'zhipu',
+        loading: false,
+        result: null,
+    };
+
+    function renderAIColumn() {
+        const cfg = platformConfig.ai;
+        const grid = document.getElementById("platformGrid");
+        let col = document.getElementById("ai-column");
+
+        if (!col) {
+            const modelOptions = AI_MODELS.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            const html = `
+                <div class="platform-col ${cfg.cssClass}" id="ai-column">
+                    <div class="platform-header">
+                        <span class="platform-icon">${cfg.icon}</span>
+                        <span class="platform-name">${cfg.name}</span>
+                        <select class="model-select" id="ai-model-select" title="切换AI模型">
+                            ${modelOptions}
+                        </select>
+                    </div>
+                    <div class="ai-input-area">
+                        <textarea id="ai-prompt" placeholder="输入你想问的问题，如：推荐Python入门资源、面试自我介绍怎么准备、帮我翻译..." rows="2"></textarea>
+                        <button id="ai-generate-btn" class="ai-generate-btn">✨ 发送提问</button>
+                    </div>
+                    <div class="ai-result" id="ai-result"></div>
+                    <div class="loading-more" id="ai-loading" style="display:none">
+                        <span class="loading-spinner"></span>AI思考中...
+                    </div>
+                </div>
+            `;
+            if (grid.children.length >= 2) {
+                grid.insertAdjacentHTML('beforeend', html);
+            } else {
+                grid.insertAdjacentHTML('afterbegin', html);
+            }
+            col = document.getElementById("ai-column");
+            document.getElementById("ai-model-select").addEventListener('change', handleModelChange);
+            document.getElementById("ai-generate-btn").addEventListener('click', handleAIGenerate);
+            document.getElementById("ai-prompt").addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAIGenerate();
+                }
+            });
+        }
+    }
+
+    function handleModelChange(e) {
+        aiState.selectedModel = e.target.value;
+    }
+
+    async function handleAIGenerate() {
+        const promptEl = document.getElementById("ai-prompt");
+        const resultEl = document.getElementById("ai-result");
+        const loadingEl = document.getElementById("ai-loading");
+        const topic = promptEl.value.trim();
+
+        if (!topic) {
+            resultEl.innerHTML = '<div class="no-result">请先输入你想学习的技能</div>';
+            return;
+        }
+
+        aiState.loading = true;
+        loadingEl.style.display = 'block';
+        resultEl.innerHTML = '';
+
+        try {
+            const res = await fetch(`${API_BASE}/api/ai/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: aiState.selectedModel, message: topic })
+            });
+            if (!res.ok) throw new Error('API请求失败');
+            const data = await res.json();
+            renderAIResult(data.content);
+        } catch (e) {
+            resultEl.innerHTML = `<div class="no-result" style="color:#e05a5a">⚠️ ${e.message}</div>`;
+        } finally {
+            aiState.loading = false;
+            loadingEl.style.display = 'none';
+        }
+    }
+
+    function renderAIResult(content) {
+        const resultEl = document.getElementById("ai-result");
+        // 将markdown格式的内容转为HTML展示
+        const html = content
+            .replace(/## (.*)/g, '<h3 style="color:#8b5cf6;margin:16px 0 8px;font-size:1rem;">$1</h3>')
+            .replace(/### (.*)/g, '<h4 style="color:#6b4ce6;margin:12px 0 6px;font-size:0.9rem;">$1</h4>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\* (.*)/g, '<li style="margin:4px 0;padding-left:8px;">$1</li>')
+            .replace(/(\d+)\. (.*)/g, '<li style="margin:4px 0;padding-left:8px;"><strong>$1.</strong> $2</li>')
+            .replace(/\n/g, '<br>');
+        resultEl.innerHTML = `<div class="ai-result-content" style="background:#f8f7ff;border-radius:12px;padding:16px;font-size:0.85rem;line-height:1.6;color:#1a2c3e;">${html}</div>`;
+    }
+
+    // ============================================================
+    // 🖥️ 整体渲染
+    // ============================================================
+    function renderAll(topicKey, rawQuery) {
+        const grid = document.getElementById("platformGrid");
+        const suggestionBox = document.getElementById("suggestionBox");
+        grid.innerHTML = "";
+        suggestionBox.innerHTML = "";
+
+        // 小红书列
+        let xhsItems = [];
+        if (topicKey && topicDatabase[topicKey]) {
+            xhsItems = topicDatabase[topicKey].xiaohongshu;
+        }
+        grid.insertAdjacentHTML('beforeend', renderStaticColumn('xiaohongshu', xhsItems));
+
+        // B站列（实时加载）
+        const keyword = rawQuery || topicKey || '';
+        biliState = { keyword, offset: 0, loading: false, allVideos: [] };
+        renderBilibiliColumn();
+        if (keyword) loadBilibiliData();
+
+        // AI学习助手列
+        renderAIColumn();
+        if (keyword) {
+            document.getElementById("ai-prompt").value = keyword;
+        }
+
+        // 未匹配到主题时显示建议
+        if (!topicKey && !rawQuery) {
+            const suggestions = Object.keys(topicDatabase);
+            suggestionBox.innerHTML = `
+                💡 热门话题：${suggestions.map(s => `<span class="topic-tag" data-topic="${s}" style="cursor:pointer;margin:4px;">${s}</span>`).join(" ")}
+            `;
+            suggestionBox.querySelectorAll(".topic-tag").forEach(tag => {
+                tag.addEventListener("click", function() {
+                    const topic = this.getAttribute("data-topic");
+                    document.getElementById("searchInput").value = topic;
+                    performSearch();
+                });
+            });
+        }
+    }
+
+    // ============================================================
+    // 🚀 执行搜索
+    // ============================================================
+    function performSearch() {
+        const query = document.getElementById("searchInput").value.trim();
+        const topicKey = findMatchingTopic(query);
+        renderAll(topicKey, query);
+    }
+
+    // ============================================================
+    // 🎬 初始化
+    // ============================================================
+    function init() {
+        document.getElementById("searchBtn").addEventListener("click", performSearch);
+        document.getElementById("searchInput").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") performSearch();
+        });
+        document.querySelectorAll("#topicTags .topic-tag").forEach(tag => {
+            tag.addEventListener("click", function() {
+                const topic = this.getAttribute("data-topic");
+                document.getElementById("searchInput").value = topic;
+                performSearch();
+            });
+        });
+        renderAll(null, '');
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
+           
